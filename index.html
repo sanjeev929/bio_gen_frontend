@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI Social Media Content Generator</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <header>
+        <h1>AI Social Media Content Generator</h1>
+        <p>Generate Bio, Caption & Username instantly! No sign-in required.</p>
+    </header>
+
+    <main>
+        <section class="generator">
+
+            <!-- Custom Dropdown -->
+            <div class="custom-dropdown" id="dropdown">
+                <div class="dropdown-selected" id="dropdownSelected">
+                    Bio Generator
+                </div>
+
+                <div class="dropdown-options" id="dropdownOptions">
+                    <div data-value="bio">Bio Generator</div>
+                    <div data-value="caption">Caption Generator</div>
+                    <div data-value="username">Username Generator</div>
+                </div>
+            </div>
+
+            <textarea id="prompt" placeholder="Type something..."></textarea>
+
+            <button id="generate-btn">Generate</button>
+
+            <div id="result-section">
+                <h2>Result</h2>
+                <div id="result"></div>
+                <button id="save-btn">Save</button>
+                <button id="copy-btn">Copy</button>
+            </div>
+        </section>
+
+        <section class="saved">
+            <h2>Saved Items</h2>
+            <ul id="saved-list"></ul>
+            <button id="clear-saved">Clear All</button>
+        </section>
+    </main>
+
+    <script>
+        // ELEMENTS
+const dropdown = document.getElementById("dropdown");
+const dropdownSelected = document.getElementById("dropdownSelected");
+const dropdownOptions = document.getElementById("dropdownOptions");
+
+let selectedTool = "bio";
+
+// -----------------
+// DROPDOWN LOGIC
+// -----------------
+dropdownSelected.addEventListener("click", () => {
+    dropdownOptions.classList.toggle("show");
+});
+
+dropdownOptions.querySelectorAll("div").forEach(option => {
+    option.addEventListener("click", () => {
+        dropdownSelected.textContent = option.textContent;
+        selectedTool = option.getAttribute("data-value");
+        dropdownOptions.classList.remove("show");
+    });
+});
+
+document.addEventListener("click", (e) => {
+    if (!dropdown.contains(e.target)) {
+        dropdownOptions.classList.remove("show");
+    }
+});
+
+// ----------------------------------------------
+// MAIN UI ELEMENTS
+// ----------------------------------------------
+const generateBtn = document.getElementById('generate-btn');
+const saveBtn = document.getElementById('save-btn');
+const copyBtn = document.getElementById('copy-btn');
+const resultDiv = document.getElementById('result');
+const savedList = document.getElementById('saved-list');
+const clearSavedBtn = document.getElementById('clear-saved');
+const promptInput = document.getElementById('prompt');
+
+// Load saved items
+let savedItems = JSON.parse(localStorage.getItem('savedItems') || '[]');
+updateSavedList();
+
+// ---------------------
+// Generate API request with loader
+// ---------------------
+generateBtn.addEventListener('click', async () => {
+    const prompt = promptInput.value.trim();
+    if (!prompt) return alert("Please enter a prompt");
+
+    // start loader
+    generateBtn.disabled = true;
+    const originalText = generateBtn.textContent;
+    generateBtn.innerHTML = `<span class="loader"></span> Generating...`;
+   //http://127.0.0.1:8000/
+   //https://bio-gen.onrender.com
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/${selectedTool}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // important!
+            body: JSON.stringify({ prompt: prompt, history: [] })
+        });
+
+        if (!response.ok) {
+            // attempt to read error detail
+            let errText = "API error";
+            try {
+                const errJson = await response.json();
+                errText = errJson.detail || errText;
+            } catch (e) { /* ignore */ }
+            alert(errText);
+            return;
+        }
+
+        const data = await response.json();
+        // sanitize / remove unwanted markdown characters if any (keeps design)
+        let text = data.result || "";
+        // simple cleanup (remove ** or markdown links) - optional
+        text = text.replace(/\*\*/g, "").replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1");
+
+        resultDiv.textContent = text + `\n\nRequests left: ${data.requests_left ?? ""}`;
+    } catch (err) {
+        console.error(err);
+        alert("API error");
+    } finally {
+        // stop loader / restore button
+        generateBtn.disabled = false;
+        generateBtn.textContent = originalText;
+    }
+});
+
+// ---------------------
+// Save
+// ---------------------
+saveBtn.addEventListener('click', () => {
+    const text = resultDiv.textContent.trim();
+    if (!text) return;
+    savedItems.push(text);
+    localStorage.setItem('savedItems', JSON.stringify(savedItems));
+    updateSavedList();
+});
+
+// ---------------------
+// Copy + tick for 3 seconds
+// ---------------------
+document.getElementById("save-btn").addEventListener("click", function () {
+    const btn = this;
+
+    btn.textContent = "Saved";   
+    btn.style.opacity = "0.7";
+
+    setTimeout(() => {
+        btn.textContent = "Save";
+        btn.style.opacity = "1";
+    }, 1500);  // back to normal after 1.5 sec
+});
+
+
+copyBtn.addEventListener('click', () => {
+    const text = resultDiv.textContent.trim();
+    if (!text) return;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // set copied state
+        copyBtn.classList.add('copied');
+        const previous = copyBtn.textContent;
+        copyBtn.textContent = '✔';
+        // revert after 3 seconds
+        setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.textContent = previous || 'Copy';
+        }, 3000);
+    }).catch(err => {
+        alert("Failed to copy");
+    });
+});
+
+// ---------------------
+// Clear saved
+// ---------------------
+clearSavedBtn.addEventListener('click', () => {
+    savedItems = [];
+    localStorage.removeItem('savedItems');
+    updateSavedList();
+});
+
+// ---------------------
+// Update UI
+// ---------------------
+function updateSavedList() {
+    savedList.innerHTML = "";
+    savedItems.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        savedList.appendChild(li);
+    });
+}
+
+    </script>
+</body>
+</html>
