@@ -106,7 +106,7 @@ generateBtn.addEventListener('click', async () => {
    //http://127.0.0.1:8000/
    //https://bio-gen.onrender.com
     try {
-        const response = await fetch(`http://127.0.0.1:8000/${selectedTool}`, {
+        const response = await fetch(`https://bio-gen.onrender.com/${selectedTool}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include', // important!
