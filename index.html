@@ -233,26 +233,27 @@ function updateSavedList() {
         const textDiv = document.createElement("span");
         textDiv.textContent = item;
 
-        /* ------- COPY BUTTON (ANIMATED) ------- */
+        // Create button container
+        const btnRow = document.createElement("div");
+        btnRow.className = "saved-item-buttons";
+
+        /* COPY button */
         const copyBtn = document.createElement("button");
         copyBtn.textContent = "Copy";
         copyBtn.className = "small-btn";
-
         copyBtn.onclick = () => {
             navigator.clipboard.writeText(item);
 
-            // animation
-            const oldText = copyBtn.textContent;
-            copyBtn.textContent = "Copy";
+            copyBtn.textContent = "Copied!";
             copyBtn.style.opacity = "0.7";
 
             setTimeout(() => {
-                copyBtn.textContent = oldText;
+                copyBtn.textContent = "Copy";
                 copyBtn.style.opacity = "1";
-            }, 1500);
+            }, 1200);
         };
 
-        /* ------- DELETE BUTTON ------- */
+        /* DELETE button */
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "Delete";
         deleteBtn.className = "small-btn delete";
@@ -262,10 +263,14 @@ function updateSavedList() {
             updateSavedList();
         };
 
-        /* Attach UI items */
+        // Add buttons inside row
+        btnRow.appendChild(copyBtn);
+        btnRow.appendChild(deleteBtn);
+
+        // Attach to list item
         li.appendChild(textDiv);
-        li.appendChild(copyBtn);
-        li.appendChild(deleteBtn);
+        li.appendChild(btnRow);
+
         savedList.appendChild(li);
     });
 }

@@ -191,6 +191,43 @@ button:disabled {
     cursor: not-allowed;
 }
 
+.saved-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: var(--card);
+}
+
+/* text stays on its own line, grows naturally */
+.saved-item span {
+    word-break: break-word;
+    font-size: 15px;
+}
+
+/* button row: COPY left, DELETE right */
+.saved-item-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.small-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.small-btn.delete {
+    background: #ff4444;
+    color: white;
+}
+
 /* RESPONSIVE */
 @media (max-width: 600px) {
     header h1 { font-size: 2rem; }
