@@ -54,6 +54,22 @@
     </main>
 
     <script>
+let safeStorage = (() => {
+    try {
+        const testKey = "__test__";
+        localStorage.setItem(testKey, testKey);
+        localStorage.removeItem(testKey);
+        return localStorage;  // Works normally
+    } catch (e) {
+        // Incognito OR storage disabled → fallback
+        let memoryStore = {};
+        return {
+            getItem: (k) => memoryStore[k] || null,
+            setItem: (k, v) => { memoryStore[k] = v },
+            removeItem: (k) => { delete memoryStore[k] }
+        };
+    }
+})();        
 /* ============================================
    DAILY LIMIT USING LOCALSTORAGE (FRONTEND)
    ============================================ */
