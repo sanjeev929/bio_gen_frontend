@@ -33,14 +33,26 @@
 </head>
 <body>
 
-    <header>
-        <h1>Free AI Bio, Username & Caption Generator</h1>
-        <p>
-            Instantly generate creative Instagram bios, usernames, and captions
-            using AI. Perfect for creators, influencers, and brands.
-            No sign-up required.
-        </p>
-    </header>
+    <header class="site-header">
+  <div class="nav">
+    <div class="logo">BioGen</div>
+    <nav>
+      <a href="#generator">Generator</a>
+      <a href="#saved">Saved</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+
+  <div class="hero">
+    <h1>Free AI Bio, Username & Caption Generator</h1>
+    <p>
+      Generate clean, professional social media content using AI.
+      Built for creators, brands, and professionals.
+    </p>
+    <p id="remaining-count" class="remaining-count"></p>
+  </div>
+</header>
+
     <main>
         <section class="generator">
 
@@ -125,7 +137,11 @@
 
 </section>    
     </main>
+    <footer class="site-footer">
+  <p>© 2025 BioGen. Built with AI. No tracking. No spam.</p>
+</footer>
 
+</body>
 <script>
         
 /* ============================================
@@ -161,17 +177,13 @@ function getRemainingRequests() {
 /* ============================================
    SHOW REMAINING REQUESTS LIVE
    ============================================ */
-const header = document.querySelector("header");
-const remainingBox = document.createElement("p");
-remainingBox.id = "remaining-count";
-remainingBox.style.marginTop = "10px";
-remainingBox.style.fontWeight = "600";
-updateRemainingDisplay();
-header.appendChild(remainingBox);
-
 function updateRemainingDisplay() {
-    remainingBox.textContent = `Requests Left Today: ${getRemainingRequests()}`;
+    const el = document.getElementById("remaining-count");
+    if (!el) return;
+    el.textContent = `Requests Left Today: ${getRemainingRequests()}`;
 }
+document.addEventListener("DOMContentLoaded", updateRemainingDisplay);
+
 
 /* ============================================
    DROPDOWN LOGIC

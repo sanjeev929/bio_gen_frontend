@@ -1,19 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 /* ================================
-   ROOT — PURE MONOCHROME
+   ROOT
 ================================ */
 :root {
-  --bg-main: #ffffff;
-  --bg-card: #ffffff;
-  --border: #e5e5e5;
-
-  --text-main: #000000;
-  --text-muted: #555555;
+  --bg: #ffffff;
+  --text: #000000;
+  --muted: #555555;
+  --border: #e6e6e6;
 }
 
 /* ================================
-   GLOBAL
+   RESET
 ================================ */
 * {
   box-sizing: border-box;
@@ -22,33 +20,84 @@
 body {
   margin: 0;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg-main);
-  color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
+  background: var(--bg);
+  color: var(--text);
 }
 
 /* ================================
-   HEADER (APPLE HERO)
+   HEADER + NAV
 ================================ */
-header {
-  text-align: center;
-  padding: 5rem 1rem 4rem;
+.site-header {
   border-bottom: 1px solid var(--border);
   animation: fadeDown 0.8s ease;
 }
 
-header h1 {
-  font-size: 3.1rem;
+.nav {
+  max-width: 1100px;
+  margin: auto;
+  padding: 1.8rem 1rem 1.5rem; /* 👈 more top padding */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.logo {
   font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+nav a {
+  margin-left: 24px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 500;
+  position: relative;
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;           /* 👈 anchor to the bottom of the link */
+  width: 0;
+  height: 2px;
+  background: black;
+  transition: width 0.2s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+
+/* ================================
+   HERO
+================================ */
+.hero {
+  text-align: center;
+  padding: 4rem 1rem 3rem;
+}
+
+.hero h1 {
+  font-size: 3rem;
   letter-spacing: -0.03em;
 }
 
-header p {
-  max-width: 720px;
+.hero p {
+  max-width: 700px;
   margin: 16px auto 0;
-  font-size: 1.1rem;
-  color: var(--text-muted);
+  color: var(--muted);
   line-height: 1.6;
+}
+
+.remaining-count {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  text-align: center;
 }
 
 /* ================================
@@ -65,28 +114,27 @@ main {
 ================================ */
 .generator,
 .saved {
-  background: var(--bg-card);
   border: 1px solid var(--border);
-  padding: 2.6rem;
+  padding: 2.5rem;
   margin-bottom: 3rem;
-  animation: fadeUp 0.7s ease;
+  animation: fadeUp 0.6s ease;
 }
 
 /* ================================
    DROPDOWN
 ================================ */
-.dropdown-selected {
+.dropdown-selected,
+.dropdown-options div {
   padding: 1rem;
   border: 1px solid var(--border);
-  background: #ffffff;
   cursor: pointer;
-  font-weight: 500;
+}
+
+.dropdown-selected:hover {
+  background: #f5f5f5;
 }
 
 .dropdown-options {
-  margin-top: 6px;
-  border: 1px solid var(--border);
-  background: #ffffff;
   display: none;
 }
 
@@ -94,60 +142,43 @@ main {
   display: block;
 }
 
-.dropdown-options div {
-  padding: 1rem;
-  cursor: pointer;
-}
-
-.dropdown-options div:hover {
-  background: #f4f4f4;
-}
-
 /* ================================
    TEXTAREA
 ================================ */
 textarea {
   width: 100%;
-  min-height: 150px;
-  padding: 1rem;
+  min-height: 140px;
   margin-top: 1rem;
+  padding: 1rem;
   border: 1px solid var(--border);
-  background: #ffffff;
-  color: black;
   font-size: 16px;
-  resize: none;
 }
 
-textarea::placeholder {
-  color: #888;
+textarea:focus {
+  outline: none;
+  border-color: black;
 }
 
 /* ================================
-   BUTTONS — BLACK SQUARE
+   BUTTONS (SQUARE + ANIMATION)
 ================================ */
 button {
   padding: 14px 20px;
-  border: 1px solid #000000;
-  background: #000000;
-  color: #ffffff;
+  border: 1px solid black;
+  background: black;
+  color: white;
   font-weight: 600;
-  font-size: 15px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 button:hover {
-  background: #111111;
+  background: #111;
+  transform: translateY(-1px);
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* spacing */
-#generate-btn {
-  margin-top: 1.5rem;
+button:active {
+  transform: scale(0.97);
 }
 
 /* ================================
@@ -155,79 +186,50 @@ button:disabled {
 ================================ */
 #result {
   margin-top: 14px;
-  padding: 1.3rem;
+  padding: 1.2rem;
   border: 1px solid var(--border);
   background: #fafafa;
-  font-size: 16px;
-  line-height: 1.7;
 }
 
 /* ================================
-   SAVED LIST
+   SAVED ITEMS
 ================================ */
-#saved-list {
-  list-style: none;
-  padding: 0;
-}
-
 .saved-item {
   border: 1px solid var(--border);
   padding: 14px;
-  margin-bottom: 14px;
-  background: #ffffff;
-}
-
-.saved-item span {
-  line-height: 1.6;
+  margin-bottom: 12px;
 }
 
 .saved-item-buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
+  gap: 12px;
+  margin-top: 10px;
 }
 
 .small-btn {
-  padding: 8px 16px;
-  border: 1px solid #000000;
-  background: #000000;
-  color: #ffffff;
+  background: black;
+  color: white;
 }
 
 .small-btn.delete {
-  background: #ffffff;
-  color: #000000;
-}
-
-/* ================================
-   SEO CONTENT
-================================ */
-.seo-content {
-  max-width: 900px;
-  margin: 120px auto;
-  padding: 0 20px;
-  line-height: 1.8;
-  color: var(--text-muted);
-}
-
-.seo-content h2,
-.seo-content h3 {
-  color: var(--text-main);
+  background: white;
+  color: black;
 }
 
 /* ================================
    FOOTER
 ================================ */
-footer {
-  text-align: center;
-  padding: 3rem 1rem;
+.site-footer {
   border-top: 1px solid var(--border);
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--muted);
   font-size: 14px;
-  color: var(--text-muted);
+  animation: fadeUp 0.8s ease;
 }
 
 /* ================================
-   ANIMATIONS (SUBTLE)
+   ANIMATIONS
 ================================ */
 @keyframes fadeUp {
   from {
@@ -255,16 +257,15 @@ footer {
    MOBILE
 ================================ */
 @media (max-width: 600px) {
-  header h1 {
+  .hero h1 {
     font-size: 2.2rem;
+  }
+
+  nav {
+    display: none;
   }
 
   button {
     width: 100%;
-  }
-
-  .saved-item-buttons {
-    flex-direction: column;
-    gap: 10px;
   }
 }
