@@ -230,6 +230,55 @@ document.getElementById("clear-saved").onclick = () => {
   localStorage.removeItem("saved_items");
   loadSaved();
 };
+document.getElementById("generate-btn").onclick = async () => {
+  const prompt = document.getElementById("prompt").value.trim();
+  const generateBtn = document.getElementById("generate-btn");
+
+  if (!prompt) {
+    alert("Enter prompt");
+    return;
+  }
+
+  if (getRequestCount() >= DAILY_LIMIT) {
+    alert("Daily limit reached");
+    return;
+  }
+
+  // Show loader
+  generateBtn.disabled = true;
+  generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+
+  try {
+    const res = await fetch(`https://bio-gen.onrender.com/${selectedTool}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
+
+    if (!res.ok) {
+      throw new Error("Server error");
+    }
+
+    const data = await res.json();
+
+    document.getElementById("result").textContent =
+      data.result || "No result";
+
+    document.getElementById("result-section").style.display = "block";
+
+    incrementRequestCount();
+    updateRemaining();
+
+  } catch (err) {
+    alert("Server error. Try again later.");
+
+  } finally {
+    // Hide loader
+    generateBtn.disabled = false;
+    generateBtn.innerHTML = "Generate";
+  }
+};
+
 </script>
 <script type="application/ld+json">
 {
